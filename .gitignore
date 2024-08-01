@@ -1,0 +1,12 @@
+# NPM environment
+node_modules
+
+# Python environment
+venv
+__pycache__
+
+# Editor directories and files
+.vscode
+
+# Project secret keys
+.env
