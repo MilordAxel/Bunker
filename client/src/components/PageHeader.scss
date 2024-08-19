@@ -1,0 +1,8 @@
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+@import "bootstrap/scss/variables-dark";
+
+.page__header {
+    background-color: $dark-bg-subtle-dark;
+    border-bottom: 0.8px solid $dark-text-emphasis-dark;
+}
