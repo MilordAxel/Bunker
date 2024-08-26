@@ -1,0 +1,50 @@
+@import "bootstrap/scss/functions";
+
+$spacer: 1rem;
+$spacers: (
+    0: 0,
+    1: $spacer * 0.25,
+    2: $spacer * 0.5,
+    3: $spacer * 0.75,
+    4: $spacer * 1,
+    5: $spacer * 1.25,
+    6: $spacer * 1.5,
+    7: $spacer * 1.75,
+    8: $spacer * 2,
+    9: $spacer * 2.25,
+    10: $spacer * 2.5
+);
+
+@import "bootstrap/scss/bootstrap";
+
+.page__content {
+    @include make-container(0);
+    color: $dark-text-emphasis-dark;
+    background-color: $dark-bg-subtle-dark;
+    height: 100vh;
+}
+
+.form-floating textarea {
+    color: $light-text-emphasis-dark !important;
+    background-color: $dark-bg-subtle-dark !important;
+    max-height: 300px !important;
+    resize: none;
+}
+
+.form-floating label {
+    color: $light-text-emphasis-dark !important;
+}
+
+.form-floating label::after {
+    background-color: $dark-bg-subtle-dark !important;
+}
+
+.form-floating textarea:focus + label,
+.form-floating textarea:not(:placeholder-shown) + label {
+    transform: scale(1) translateY(-1.85rem) !important;
+}
+
+.form-floating textarea:focus {
+    color: $light-text-emphasis-dark !important;
+    background-color: transparent !important;
+}
