@@ -10,3 +10,6 @@ __pycache__
 
 # Project secret keys
 .env
+
+# DB files
+*.sqlite3
