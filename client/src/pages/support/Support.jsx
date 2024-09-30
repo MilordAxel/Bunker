@@ -1,12 +1,25 @@
 import "./Support.scss";
-import { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import PageHeader from "../../components/PageHeader";
+import axiosInstance from "../../instances/axios";
 
 export function Support() {
     const textarea_elem = useRef(null);
+    const [reportText, setReportText] = useState("");
 
     const adjustHeight = () => {
         textarea_elem.current.style.height = `${textarea_elem.current.scrollHeight}px`;
+    }
+    
+    const createReport = async () => {
+        try {
+            const { data } = await axiosInstance.post(
+                "user_report",
+                {text: reportText.trim()}
+            )
+        } catch (err) {
+            
+        }
     }
 
     useLayoutEffect(adjustHeight, []);
@@ -25,13 +38,24 @@ export function Support() {
                                 className="form-control shadow-none"
                                 id="userReport"
                                 placeholder=""
+                                value={reportText}
                                 onChange={adjustHeight}
+                                onInput={(e) => {setReportText(e.target.value)}}
                                 ref={textarea_elem}
                             ></textarea>
                             <label htmlFor="userReport">Describe the problem</label>
                         </div>
                         <div className="d-flex w-50 mx-auto float-start">
-                            <button type="submit" className="btn btn-secondary rounded-pill">Send</button>
+                            <button
+                                type="submit"
+                                className="btn btn-secondary rounded-pill"
+                                onClick={(e) => {
+                                    e.preventDefault()
+                                    createReport()
+                                }}
+                            >
+                                Send
+                            </button>
                         </div>
                     </form>
                 </div>
