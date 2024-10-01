@@ -1,6 +1,6 @@
 import "./Home.scss";
 import imgBunker from "../../assets/img/bunker.jpg";
-import PageHeader from "../../components/PageHeader";
+import PageHeader from "../../components/PageHeader/PageHeader";
 
 export function Home() {
     return (

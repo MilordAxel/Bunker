@@ -1,6 +1,6 @@
 import "./Support.scss";
 import { useLayoutEffect, useRef, useState } from "react";
-import PageHeader from "../../components/PageHeader";
+import PageHeader from "../../components/PageHeader/PageHeader";
 import axiosInstance from "../../instances/axios";
 
 export function Support() {
