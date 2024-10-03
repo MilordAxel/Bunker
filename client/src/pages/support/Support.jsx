@@ -6,6 +6,8 @@ import axiosInstance from "../../instances/axios";
 export function Support() {
     const textarea_elem = useRef(null);
     const [reportText, setReportText] = useState("");
+    const [isAlertShow, setAlertShow] = useState(false);
+    const [alertProperties, setAlertProperties] = useState({});
 
     const adjustHeight = () => {
         textarea_elem.current.style.height = `${textarea_elem.current.scrollHeight}px`;
@@ -17,9 +19,27 @@ export function Support() {
                 "user_report",
                 {text: reportText.trim()}
             )
+            let userReportID = data.id;
+            setAlertProperties({
+                type: "success",
+                title: "Success!",
+                text: `Your report ID is ${userReportID}`
+            });
         } catch (err) {
-            
+            const errorDetails = Object.entries(err?.response?.data || {}).map(
+                ([fieldName, details]) => {
+                    return `Field "${fieldName}": ${details.join(",").toLowerCase()}`
+                }
+            );
+
+            setAlertProperties({
+                type: "danger",
+                title: "ERROR!!!",
+                code: err.code,
+                details: errorDetails.join(";") || err.message
+            });
         }
+        setAlertShow(true);
     }
 
     useLayoutEffect(adjustHeight, []);
@@ -33,6 +53,33 @@ export function Support() {
                         Support
                     </div>
                     <form className="d-flex flex-column row-gap-2">
+                        { isAlertShow ?
+                        <div
+                            className={"w-50 mx-auto alert alert-" + alertProperties.type}
+                            data-bs-theme="dark"
+                        >
+                            <div className="alert__header d-flex justify-content-between">
+                                <div className="title fw-bold">{alertProperties.title}</div>
+                                <button type="button" className="btn-close" onClick={() => setAlertShow(false)} />
+                            </div>
+                            <div className="alert__body">
+                                { alertProperties.type === "success" ?
+                                <> {alertProperties.text} </>
+                                : alertProperties.type === "danger" ?
+                                <>
+                                    <div className="error__code">
+                                        <span className="fw-bold">Code: </span>
+                                        <span>{alertProperties.code}</span>
+                                    </div>
+                                    <div className="error__details">
+                                        <span className="fw-bold">Details:</span>
+                                        <div>{alertProperties.details}</div>
+                                    </div>
+                                </>
+                                : null }
+                            </div>
+                        </div>
+                        : null }
                         <div className="form-floating w-50 mx-auto">
                             <textarea
                                 className="form-control shadow-none"
