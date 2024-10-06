@@ -1,0 +1,72 @@
+@import "bootstrap/scss/functions";
+
+$spacer: 1rem;
+$spacers: (
+    0: 0,
+    1: $spacer * 0.25,
+    2: $spacer * 0.5,
+    3: $spacer * 0.75,
+    4: $spacer * 1,
+    5: $spacer * 1.25,
+    6: $spacer * 1.5,
+    7: $spacer * 1.75,
+    8: $spacer * 2,
+    9: $spacer * 2.25,
+    10: $spacer * 2.5
+);
+
+@import "bootstrap/scss/bootstrap";
+
+.page__content {
+    @include make-container(0);
+    color: $dark-text-emphasis-dark;
+    background-color: $dark-bg-subtle-dark;
+    height: 100vh;
+}
+
+.form-floating input {
+    color: $light-text-emphasis-dark !important;
+    background-color: $dark-bg-subtle-dark !important;
+    min-height: 0rem !important;
+    height: calc(2.5rem + calc(var(--bs-border-width) * 2)) !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+.form-floating label {
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+    color: $light-text-emphasis-dark !important;
+}
+
+.form-floating label::after {
+    background-color: $dark-bg-subtle-dark !important;
+}
+
+.form-floating input:focus + label,
+.form-floating input:not(:placeholder-shown) + label {
+    transform: scale(1) translateY(-1.85rem) !important;
+}
+
+.form-floating input:focus {
+    color: $light-text-emphasis-dark !important;
+    background-color: transparent !important;
+    outline: 0 !important;
+    box-shadow: none !important;
+}
+
+.form-switch input {
+    background-color: $red-800;
+    border-color: $red-400;
+    background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'><circle r='3' fill='rgba%28255, 255, 255, 0.75%29'/></svg>") !important;
+}
+
+.form-switch input:focus {
+    border-color: $red-400;
+    box-shadow: none !important;
+}
+
+.form-switch input:checked {
+    background-color: $green-800;
+    border-color: $green-400;
+}
