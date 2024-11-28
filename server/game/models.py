@@ -81,3 +81,16 @@ class Player(models.Model):
         related_name="+",
         default=GenCharacteristic("inventory")
     )
+
+
+# Cached model
+class Game(models.Model):
+    code = models.CharField(
+        max_length=10,
+        default=gen_game_code
+    )
+    players = []
+
+    def add_players(self, *players: Player):
+        for player in players:
+            self.players.append(player)
