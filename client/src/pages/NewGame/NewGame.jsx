@@ -16,6 +16,7 @@ function NewGame() {
                 <div className="display-1 text-center">
                     Create New Game
                 </div>
+                <form className="d-flex flex-column row-gap-4 w-25 mx-auto">
                     <div className="form-floating">
                         <input
                             type="text"

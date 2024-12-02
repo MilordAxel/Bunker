@@ -45,7 +45,7 @@ $spacers: (
 
 .form-floating input:focus + label,
 .form-floating input:not(:placeholder-shown) + label {
-    transform: scale(1) translateY(-1.85rem) !important;
+    transform: scale(.75) translateY(-1.85rem) !important;
 }
 
 .form-floating input:focus {
