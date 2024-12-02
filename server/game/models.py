@@ -89,6 +89,7 @@ class Game(models.Model):
         max_length=10,
         default=gen_game_code
     )
+    private = models.BooleanField()
     players = []
 
     def add_players(self, *players: Player):
