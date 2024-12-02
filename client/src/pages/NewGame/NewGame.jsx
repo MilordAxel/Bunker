@@ -5,6 +5,7 @@ import PageHeader from "../../components/PageHeader/PageHeader";
 function NewGame() {
     const [gameName, setGameName] = useState("");
     const [nickname, setNickname] = useState("");
+    const [gamePassword, setGamePassword] = useState("");
     const [isPrivateGame, setPrivateGame] = useState(false);
 
     return (
@@ -38,6 +39,24 @@ function NewGame() {
                         />
                         <label htmlFor="nickname">Enter your nickname</label>
                     </div>
+
+                    { isPrivateGame ?
+                    <>
+                        <div className="form-floating">
+                            <input
+                                type="password"
+                                className="form-control"
+                                id="gamePassword"
+                                placeholder=""
+                                value={gamePassword}
+                                onInput={(e) => setGamePassword(e.target.value)}
+                            />
+                            <label htmlFor="gamePassword">Game password</label>
+                        </div>
+                    </>
+                    :
+                    null }
+                    
                     <div className="d-flex justify-content-between">
                         <div className="form-check form-switch">
                             <input
