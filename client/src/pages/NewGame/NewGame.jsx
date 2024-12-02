@@ -3,6 +3,7 @@ import { useState } from "react";
 import PageHeader from "../../components/PageHeader/PageHeader";
 
 function NewGame() {
+    const [gameName, setGameName] = useState("");
     const [nickname, setNickname] = useState("");
     const [isPrivateGame, setPrivateGame] = useState(false);
 
@@ -14,7 +15,18 @@ function NewGame() {
                 <div className="display-1 text-center">
                     Create New Game
                 </div>
-                <form className="d-flex flex-column row-gap-2 w-25 mx-auto">
+                    <div className="form-floating">
+                        <input
+                            type="text"
+                            className="form-control"
+                            id="gameName"
+                            placeholder=""
+                            value={gameName}
+                            onInput={(e) => setGameName(e.target.value)}
+                        />
+                        <label htmlFor="gameName">Game name</label>
+                    </div>
+
                     <div className="form-floating">
                         <input
                             type="text"
