@@ -36,6 +36,7 @@ class GenCharacteristic:
 # Cached model
 class Player(models.Model):
     nickname = models.CharField(max_length=40)
+    game_host = models.BooleanField(default=False)
 
     # Characteristics
     age = models.IntegerField(
