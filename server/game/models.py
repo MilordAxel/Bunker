@@ -85,6 +85,9 @@ class Player(models.Model):
 
 # Cached model
 class Game(models.Model):
+    name = models.CharField(
+        max_length=255
+    )
     code = models.CharField(
         max_length=10,
         default=gen_game_code
