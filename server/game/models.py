@@ -6,6 +6,7 @@ from django.core.validators import (
     RegexValidator,
     MinLengthValidator
 )
+from django.core.exceptions import ValidationError
 
 
 class Characteristic(models.Model):
@@ -102,6 +103,11 @@ class Game(models.Model):
         null=True
     )
     players = []
+
+    def clean(self):
+        super().clean()
+        if self.private and not self.password:
+            raise ValidationError({"password": "This field cannot be blank"})
 
     def add_players(self, *players: Player):
         for player in players:
