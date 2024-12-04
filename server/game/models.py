@@ -3,7 +3,8 @@ from random import choice, randint
 
 from django.db import models
 from django.core.validators import (
-    RegexValidator
+    RegexValidator,
+    MinLengthValidator
 )
 
 
@@ -94,6 +95,12 @@ class Game(models.Model):
         default=gen_game_code
     )
     private = models.BooleanField()
+    password = models.CharField(
+        max_length=40,
+        validators=[MinLengthValidator(8)],
+        blank=True,
+        null=True
+    )
     players = []
 
     def add_players(self, *players: Player):
