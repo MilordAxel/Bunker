@@ -8,6 +8,19 @@ function NewGame() {
     const [gamePassword, setGamePassword] = useState("");
     const [isPrivateGame, setPrivateGame] = useState(false);
 
+    const createGame = (event) => {
+        event.preventDefault();
+        axiosInstance.post(
+            "/create_game",
+            {
+                gameName: gameName,
+                gamePassword: gamePassword,
+                privateGame: isPrivateGame,
+                playerNickname: nickname
+            }
+        );
+    }
+
     return (
         <>
         <div className="page__content container-fluid overflow-auto">
@@ -72,10 +85,7 @@ function NewGame() {
                         <button
                             type="submit"
                             className="btn btn-secondary rounded-pill"
-                            onClick={(e) => {
-                                e.preventDefault()
-
-                            }}
+                            onClick={createGame}
                         >
                             Create Game
                         </button>
