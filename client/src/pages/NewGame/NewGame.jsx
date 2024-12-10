@@ -1,12 +1,29 @@
 import "./NewGame.scss";
+import { useEffect, useRef, useState } from "react";
 import axiosInstance from "../../instances/axios";
 import PageHeader from "../../components/PageHeader/PageHeader";
 
+function ErrorMessage({ textList }) {
+    return (
+        <>
+            <div className="error__message">
+                { textList.map((row, index) => (
+                    <span key={index}>{row}</span>
+                )) }
+            </div>
+        </>
+    );
+}
+
 function NewGame() {
+    const inputsRefs = useRef({});
+
     const [gameName, setGameName] = useState("");
     const [nickname, setNickname] = useState("");
     const [gamePassword, setGamePassword] = useState("");
     const [isPrivateGame, setPrivateGame] = useState(false);
+
+    const [errorMessages, setErrorMessages] = useState({});
 
     const createGame = (event) => {
         event.preventDefault();
@@ -18,8 +35,34 @@ function NewGame() {
                 privateGame: isPrivateGame,
                 playerNickname: nickname
             }
+        ).catch(
+            (error) => {
+                switch (error.status) {
+                    case 400:
+                        setErrorMessages(error.response.data);
+                        break;
+                    default:
+                        setErrorMessages({});
+                        break;
+                }
+            }
         );
     }
+
+    useEffect(() => {
+        function checkValidInput() {
+            for (let fieldName in inputsRefs.current) {
+                if (inputsRefs.current[fieldName] === null) {
+                    continue
+                } else if (errorMessages[fieldName] !== undefined) {
+                    inputsRefs.current[fieldName].classList.add("bad__input");
+                } else {
+                    inputsRefs.current[fieldName].classList.remove("bad__input");
+                };
+            }
+        }
+        checkValidInput();
+    }, [errorMessages]);
 
     return (
         <>
@@ -37,9 +80,11 @@ function NewGame() {
                             id="gameName"
                             placeholder=""
                             value={gameName}
-                            onInput={(e) => setGameName(e.target.value)}
+                            onInput={(event) => setGameName(event.target.value)}
+                            ref={(elem) => inputsRefs.current["gameName"] = elem}
                         />
                         <label htmlFor="gameName">Game name</label>
+                        <ErrorMessage textList={errorMessages?.gameName || []} />
                     </div>
 
                     <div className="form-floating">
@@ -49,9 +94,11 @@ function NewGame() {
                             id="nickname"
                             placeholder=""
                             value={nickname}
-                            onInput={(e) => {setNickname(e.target.value)}}
+                            onInput={(event) => {setNickname(event.target.value)}}
+                            ref={(elem) => inputsRefs.current["nickname"] = elem}
                         />
                         <label htmlFor="nickname">Enter your nickname</label>
+                        <ErrorMessage textList={errorMessages?.nickname || []} />
                     </div>
 
                     { isPrivateGame ?
@@ -63,9 +110,11 @@ function NewGame() {
                                 id="gamePassword"
                                 placeholder=""
                                 value={gamePassword}
-                                onInput={(e) => setGamePassword(e.target.value)}
+                                onInput={(elem) => setGamePassword(elem.target.value)}
+                                ref={(elem) => inputsRefs.current["gamePassword"] = elem}
                             />
                             <label htmlFor="gamePassword">Game password</label>
+                            <ErrorMessage textList={errorMessages?.gamePassword || []} />
                         </div>
                     </>
                     :

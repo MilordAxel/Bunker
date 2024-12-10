@@ -70,3 +70,15 @@ $spacers: (
     background-color: $green-800;
     border-color: $green-400;
 }
+
+.error__message {
+    display: flex;
+    flex-direction: column;
+    color: $red-700;
+    font-size: $font-size-base * .75;
+}
+
+.bad__input {
+    border-color: $red-700 !important;
+    box-shadow: 0 0 .5rem $red-700;
+}
