@@ -82,3 +82,8 @@ $spacers: (
     border-color: $red-700 !important;
     box-shadow: 0 0 .5rem $red-700;
 }
+
+.modal-content {
+    color: $danger-text-emphasis-dark !important;
+    background-color: $danger-bg-subtle-dark !important;
+}
