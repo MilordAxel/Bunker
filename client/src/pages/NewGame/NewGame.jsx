@@ -1,5 +1,5 @@
 import "./NewGame.scss";
-import { useState } from "react";
+import axiosInstance from "../../instances/axios";
 import PageHeader from "../../components/PageHeader/PageHeader";
 
 function NewGame() {
