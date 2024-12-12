@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
-from . import models
+from . import models, serializers
 
 
 REDIS_CACHE = caches["default"]
@@ -44,8 +44,17 @@ class CreateGameView(APIView):
                 data=valid_exc.message_dict,
                 status=status.HTTP_400_BAD_REQUEST
             )
-        
+
         new_game.add_players(game_host)
+
+        serialized_game = serializers.GameSerializer(new_game).data
+
         REDIS_CACHE.set(f"game:{new_game.code}", new_game)
 
-        return Response({}, status=status.HTTP_201_CREATED)
+        return Response(
+            {
+                "gameCode": new_game.code,
+                "players": serialized_game.get("players")
+            },
+            status=status.HTTP_201_CREATED
+        )
