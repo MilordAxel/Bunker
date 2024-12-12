@@ -19,3 +19,16 @@ class PlayerSerializer(serializers.ModelSerializer):
         
         return representation
 
+
+class GameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Game
+        exclude = ["id"]
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation["players"] = list(map(
+            lambda player: PlayerSerializer(player).data,
+            instance.players
+        ))
+        return representation
