@@ -102,6 +102,13 @@ class Game(models.Model):
         blank=True,
         null=True
     )
+    status = models.CharField(
+        max_length=7,
+        validators=[
+            RegexValidator(r"wait|start|current|finish")
+        ],
+        default="wait"
+    )
     players = []
 
     def clean(self):
