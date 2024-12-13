@@ -165,7 +165,7 @@ function NewGame() {
                                 id="gamePassword"
                                 placeholder=""
                                 value={gamePassword}
-                                onInput={(elem) => setGamePassword(elem.target.value)}
+                                onInput={(event) => setGamePassword(event.target.value)}
                                 ref={(elem) => inputsRefs.current["gamePassword"] = elem}
                             />
                             <label htmlFor="gamePassword">Game password</label>
