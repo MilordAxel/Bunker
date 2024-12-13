@@ -1,5 +1,6 @@
 import "./NewGame.scss";
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../instances/axios";
 import PageHeader from "../../components/PageHeader/PageHeader";
 
@@ -55,6 +56,8 @@ function ServerErrorModal({ show, setShow }) {
 }
 
 function NewGame() {
+    const navigate = useNavigate();
+
     const inputsRefs = useRef({});
 
     const [gameName, setGameName] = useState("");
@@ -75,7 +78,18 @@ function NewGame() {
                 privateGame: isPrivateGame,
                 playerNickname: nickname
             }
-        ).catch(
+        ).then(
+            (response) => {
+                navigate(
+                    `/game_waiting/${response.data.gameCode}`,
+                    {
+                        state: {
+                            gameName: gameName,
+                            players: response.data.players
+                        }
+                    }
+                );
+            },
             (error) => {
                 switch (error.status) {
                     case 400:
