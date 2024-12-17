@@ -109,7 +109,7 @@ class Game(models.Model):
         ],
         default="wait"
     )
-    players = []
+    players = models.JSONField(blank=True, null=True, default=list)
 
     def clean(self):
         super().clean()
