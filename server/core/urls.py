@@ -22,3 +22,5 @@ urlpatterns = [
     path("api/", include("users.urls")),
     path("api/", include("game.urls"))
 ]
+
+websocket_urlpatterns = []

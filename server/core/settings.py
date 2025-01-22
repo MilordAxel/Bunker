@@ -41,6 +41,7 @@ CORS_ALLOWED_ORIGIN_REGEXES = [
 # Application definition
 
 INSTALLED_APPS = [
+    "daphne",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -83,8 +84,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'core.wsgi.application'
-
+ASGI_APPLICATION = "core.asgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
@@ -147,6 +147,19 @@ CACHES = {
             "PASSWORD": getenv("REDIS_CACHE_PASSWORD"),
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "PICKLE_VERSION": -1,
+        }
+    }
+}
+
+# Channel layer
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [{
+                "address": "redis://channel_layer@127.0.0.1:6379/0",
+                "password": getenv("REDIS_CHANNEL_LAYER_PASSWORD")
+            }]
         }
     }
 }
