@@ -17,10 +17,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from channels.routing import URLRouter
+
+from game.urls import websocket_urlpatterns as game_app_ws_urlpatterns
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("api/", include("users.urls")),
     path("api/", include("game.urls"))
 ]
 
-websocket_urlpatterns = []
+websocket_urlpatterns = [
+    path("api/", URLRouter(game_app_ws_urlpatterns))
+]
