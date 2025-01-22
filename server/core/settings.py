@@ -144,7 +144,7 @@ CACHES = {
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": "redis://bunker@127.0.0.1:6379/0",
         "OPTIONS": {
-            "PASSWORD": getenv("REDIS_CACHE_PASSWORD"),
+            "PASSWORD": getenv("REDIS_BUNKER_PASSWORD"),
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "PICKLE_VERSION": -1,
         }
