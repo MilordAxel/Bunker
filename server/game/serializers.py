@@ -23,4 +23,4 @@ class PlayerSerializer(serializers.ModelSerializer):
 class GameSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Game
-        exclude = ["id"]
+        fields = ["name", "code", "private", "status"]
