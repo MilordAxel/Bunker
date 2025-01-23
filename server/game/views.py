@@ -5,6 +5,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
+from asgiref.sync import async_to_sync
+
+from channels.layers import get_channel_layer
+
 from . import models, serializers
 
 
@@ -53,6 +57,15 @@ class CreateGameView(APIView):
         ).data
 
         REDIS_CACHE.set(f"game:{new_game.code}", new_game)
+
+        serialized_new_game = serializers.GameSerializer(new_game).data
+        async_to_sync(get_channel_layer().group_send)(
+            "game_waiting_list",
+            {
+                "type": "broadcast.new.game",
+                "content": serialized_new_game
+            }
+        )
 
         return Response(
             {
