@@ -47,14 +47,17 @@ class CreateGameView(APIView):
 
         new_game.add_players(game_host)
 
-        serialized_game = serializers.GameSerializer(new_game).data
+        serialized_players = serializers.PlayerSerializer(
+            new_game.players,
+            many=True
+        ).data
 
         REDIS_CACHE.set(f"game:{new_game.code}", new_game)
 
         return Response(
             {
                 "gameCode": new_game.code,
-                "players": serialized_game.get("players")
+                "players": serialized_players
             },
             status=status.HTTP_201_CREATED
         )
