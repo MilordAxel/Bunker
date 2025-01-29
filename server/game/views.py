@@ -1,7 +1,7 @@
 from django.core.cache import caches
 from django.core.exceptions import ValidationError
 
-from rest_framework.views import APIView
+from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -15,8 +15,8 @@ from . import models, serializers
 REDIS_CACHE = caches["default"]
 
 
-class CreateGameView(APIView):
-    def post(self, request):        
+class GameViewSet(ViewSet):
+    def create(self, request):
         new_game = models.Game(
             name=request.data.get("gameName"),
             private=request.data.get("privateGame"),

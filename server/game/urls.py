@@ -1,11 +1,18 @@
-from django.urls import path
+from django.urls import path, include
+
+from rest_framework import routers
+
 from . import views
 from . import consumers
 
 
 app_name = "game"
+
+rest_router = routers.DefaultRouter(trailing_slash=False)
+rest_router.register("game", views.GameViewSet, basename="game")
+
 urlpatterns = [
-    path("create_game", views.CreateGameView.as_view(), name="create_game")
+    path("", include(rest_router.urls))
 ]
 
 websocket_urlpatterns = [
