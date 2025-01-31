@@ -1,0 +1,8 @@
+@import "bootstrap/scss/bootstrap";
+
+.error__message {
+    display: flex;
+    flex-direction: column;
+    color: $red-700;
+    font-size: $font-size-base * .75;
+}
