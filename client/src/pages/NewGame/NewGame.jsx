@@ -1,59 +1,12 @@
 import "./NewGame.scss";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../instances/axios";
+import useCheckValidInput from "../../hooks/useCheckValidInput";
+
 import PageHeader from "../../components/PageHeader/PageHeader";
-
-function ErrorMessage({ textList }) {
-    return (
-        <>
-            <div className="error__message">
-                { textList.map((row, index) => (
-                    <span key={index}>{row}</span>
-                )) }
-            </div>
-        </>
-    );
-}
-
-function ServerErrorModal({ show, setShow }) {
-    const showModalButtonRef = useRef();
-
-    if (show) showModalButtonRef.current.click();
-
-    return (
-        <>
-            <div className="modal fade" id="errorModal" tabIndex="-1" aria-hidden="true" data-bs-backdrop="static">
-                <div className="modal-dialog">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <span className="modal-title">UNEXPECTED SERVER ERROR</span>
-                        </div>
-                        <div className="modal-body">
-                            Something went wrong on the server. Contact us with a description of this trouble through support form.
-                        </div>
-                        <div className="modal-footer">
-                            <button
-                                type="button"
-                                class="btn btn-outline-danger"
-                                data-bs-dismiss="modal"
-                                onClick={(event) => setShow(false)}
-                            >
-                                Close
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <button
-                ref={showModalButtonRef}
-                data-bs-toggle="modal"
-                data-bs-target="#errorModal"
-                hidden
-            ></button>
-        </>
-    );
-}
+import FieldErrorMessage from "../../components/FieldErrorMessage/FieldErrorMessage";
+import ServerErrorModal from "../../components/ServerErrorModal/ServerErrorModal";
 
 function NewGame() {
     const navigate = useNavigate();
@@ -104,20 +57,7 @@ function NewGame() {
         );
     }
 
-    useEffect(() => {
-        function checkValidInput() {
-            for (let fieldName in inputsRefs.current) {
-                if (inputsRefs.current[fieldName] === null) {
-                    continue
-                } else if (errorMessages[fieldName] !== undefined) {
-                    inputsRefs.current[fieldName].classList.add("bad__input");
-                } else {
-                    inputsRefs.current[fieldName].classList.remove("bad__input");
-                };
-            }
-        }
-        checkValidInput();
-    }, [errorMessages]);
+    useCheckValidInput(inputsRefs, errorMessages);
 
     return (
         <>
@@ -139,7 +79,7 @@ function NewGame() {
                             ref={(elem) => inputsRefs.current["gameName"] = elem}
                         />
                         <label htmlFor="gameName">Game name</label>
-                        <ErrorMessage textList={errorMessages?.gameName || []} />
+                        <FieldErrorMessage textList={errorMessages?.gameName || []} />
                     </div>
 
                     <div className="form-floating">
@@ -153,7 +93,7 @@ function NewGame() {
                             ref={(elem) => inputsRefs.current["nickname"] = elem}
                         />
                         <label htmlFor="nickname">Enter your nickname</label>
-                        <ErrorMessage textList={errorMessages?.nickname || []} />
+                        <FieldErrorMessage textList={errorMessages?.nickname || []} />
                     </div>
 
                     { isPrivateGame ?
@@ -169,7 +109,7 @@ function NewGame() {
                                 ref={(elem) => inputsRefs.current["gamePassword"] = elem}
                             />
                             <label htmlFor="gamePassword">Game password</label>
-                            <ErrorMessage textList={errorMessages?.gamePassword || []} />
+                            <FieldErrorMessage textList={errorMessages?.gamePassword || []} />
                         </div>
                     </>
                     :
