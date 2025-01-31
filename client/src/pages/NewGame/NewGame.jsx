@@ -24,7 +24,7 @@ function NewGame() {
     const createGame = (event) => {
         event.preventDefault();
         axiosInstance.post(
-            "/create_game",
+            "/game",
             {
                 gameName: gameName,
                 gamePassword: gamePassword,
