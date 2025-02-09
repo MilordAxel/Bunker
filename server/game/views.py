@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.decorators import action
 
 from asgiref.sync import async_to_sync
 
@@ -16,6 +17,8 @@ REDIS_CACHE = caches["default"]
 
 
 class GameViewSet(ViewSet):
+    lookup_url_kwarg = "game_code"
+
     def create(self, request):
         new_game = models.Game(
             name=request.data.get("gameName"),
@@ -73,4 +76,55 @@ class GameViewSet(ViewSet):
                 "players": serialized_players
             },
             status=status.HTTP_201_CREATED
+        )
+
+    @action(methods=["patch"], detail=False, url_path="add_player" , url_name="add_player")
+    def add_player_to_game(self, request):
+        game_code = request.data.get("gameCode")
+
+        if not game_code:
+            return Response(
+                data={"gameCode": ["This field cannot be blank."]},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        elif len(game_code) != 10:
+            return Response(
+                data={"gameCode": ["Invalid code."]},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        game = REDIS_CACHE.get(f"game:{game_code}")
+        
+        if game is None:
+            return Response(
+                data={"gameCode": ["This game does not exist."]},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        elif game.status != "wait":
+            return Response(
+                data={"gameCode": ["This game has already begun."]},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        new_player = models.Player(
+            nickname=request.data.get("playerNickname")
+        )
+
+        try:
+            new_player.full_clean()
+        except ValidationError as valid_exc:
+            return Response(
+                data=valid_exc.message_dict,
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        game.add_players(new_player)
+
+        REDIS_CACHE.set(f"game:{game.code}", game)
+
+        return Response(
+            data={
+                "gameName": game.name
+            },
+            status=status.HTTP_200_OK
         )
