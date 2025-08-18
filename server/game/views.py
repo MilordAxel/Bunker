@@ -45,7 +45,7 @@ class GameViewSet(ViewSet):
         )
 
         try:
-            game_host.full_clean()
+            game_host.full_clean(exclude=["id"])
         except ValidationError as valid_exc:
             return Response(
                 data=valid_exc.message_dict,
@@ -54,9 +54,8 @@ class GameViewSet(ViewSet):
 
         new_game.add_players(game_host)
 
-        serialized_players = serializers.PlayerSerializer(
-            new_game.players,
-            many=True
+        serialized_game_host = serializers.PlayerSerializer(
+            game_host
         ).data
 
         REDIS_CACHE.set(f"game:{new_game.code}", new_game)
@@ -70,13 +69,11 @@ class GameViewSet(ViewSet):
             }
         )
 
-        return Response(
-            {
-                "gameCode": new_game.code,
-                "players": serialized_players
-            },
+        response = Response(
+            {"gameCode": new_game.code},
             status=status.HTTP_201_CREATED
         )
+        return response
 
     @action(methods=["patch"], detail=False, url_path="add_player" , url_name="add_player")
     def add_player_to_game(self, request):
@@ -111,7 +108,7 @@ class GameViewSet(ViewSet):
         )
 
         try:
-            new_player.full_clean()
+            new_player.full_clean(exclude=["id"])
         except ValidationError as valid_exc:
             return Response(
                 data=valid_exc.message_dict,
@@ -122,9 +119,11 @@ class GameViewSet(ViewSet):
 
         REDIS_CACHE.set(f"game:{game.code}", game)
 
-        return Response(
-            data={
-                "gameName": game.name
-            },
+        serialized_new_player = serializers.PlayerSerializer(
+            new_player
+        ).data
+        response = Response(
+            data={"gameName": game.name},
             status=status.HTTP_200_OK
         )
+        return response
