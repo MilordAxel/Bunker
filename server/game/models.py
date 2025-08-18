@@ -1,3 +1,5 @@
+import uuid
+
 from string import ascii_letters, digits
 from random import choice, randint
 
@@ -37,6 +39,11 @@ class GenCharacteristic:
 
 # Cached model
 class Player(models.Model):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False
+    )
     nickname = models.CharField(max_length=40)
     game_host = models.BooleanField(default=False)
 
