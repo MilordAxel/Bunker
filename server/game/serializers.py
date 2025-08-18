@@ -5,7 +5,7 @@ from . import models
 class PlayerSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Player
-        exclude = ["id"]
+        fields = "__all__"
         depth = 1
     
     def to_representation(self, instance):
