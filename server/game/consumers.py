@@ -110,3 +110,12 @@ class GamePlayersListConsumer(AsyncJsonWebsocketConsumer):
                     "playersList": serialized_players
                 }
             )
+
+    async def new_player(self, event):
+        if event.get("content"):
+            await self.send_json(
+                content={
+                    "dataType": "newPlayer",
+                    "newPlayer": event["content"].get("new_player")
+                }
+            )

@@ -122,6 +122,14 @@ class GameViewSet(ViewSet):
         serialized_new_player = serializers.PlayerSerializer(
             new_player
         ).data
+        async_to_sync(get_channel_layer().group_send)(
+            f"game_{game.code}",
+            {
+                "type": "new.player",
+                "new_player": serialized_new_player
+            }
+        )
+
         response = Response(
             data={"gameName": game.name},
             status=status.HTTP_200_OK
