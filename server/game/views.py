@@ -73,6 +73,7 @@ class GameViewSet(ViewSet):
             {"gameCode": new_game.code},
             status=status.HTTP_201_CREATED
         )
+        response.set_cookie("playerID", serialized_game_host.get("id"))
         return response
 
     @action(methods=["patch"], detail=False, url_path="add_player" , url_name="add_player")
@@ -134,4 +135,5 @@ class GameViewSet(ViewSet):
             data={"gameName": game.name},
             status=status.HTTP_200_OK
         )
+        response.set_cookie("playerID", serialized_new_player.get("id"))
         return response
