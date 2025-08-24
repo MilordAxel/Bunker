@@ -61,7 +61,7 @@ class GameViewSet(ViewSet):
         REDIS_CACHE.set(f"game:{new_game.code}", new_game)
 
         serialized_new_game = serializers.GameSerializer(new_game).data
-        async_to_sync(get_channel_layer().group_send)(
+        get_channel_layer().group_send(
             "game_waiting_list",
             {
                 "type": "broadcast.new.game",
@@ -123,7 +123,7 @@ class GameViewSet(ViewSet):
         serialized_new_player = serializers.PlayerSerializer(
             new_player
         ).data
-        async_to_sync(get_channel_layer().group_send)(
+        get_channel_layer().group_send(
             f"game_{game.code}",
             {
                 "type": "new.player",

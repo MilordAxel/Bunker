@@ -2,15 +2,15 @@ from json.decoder import JSONDecodeError
 
 from django.core.cache import caches
 from redis.exceptions import NoPermissionError
-from channels.generic.websocket import AsyncJsonWebsocketConsumer
+from channels.generic.websocket import JsonWebsocketConsumer
 
 from . import serializers, filters
 
 
-class GameWaitingListConsumer(AsyncJsonWebsocketConsumer):
-    async def connect(self):
-        await self.accept()
-        await self.channel_layer.group_add(
+class GameWaitingListConsumer(JsonWebsocketConsumer):
+    def connect(self):
+        self.accept()
+        self.channel_layer.group_add(
             "game_waiting_list",
             self.channel_name
         )
@@ -26,58 +26,58 @@ class GameWaitingListConsumer(AsyncJsonWebsocketConsumer):
             many=True
         ).data
 
-        await self.send_json(content=serialized_games_waiting_list)
+        self.send_json(content=serialized_games_waiting_list)
 
-    async def broadcast_new_game(self, event):
-        await self.send_json(content=event.get("content", {}))
+    def broadcast_new_game(self, event):
+        self.send_json(content=event.get("content", {}))
     
-    async def disconnect(self, code):
-        await self.channel_layer.group_discard(
+    def disconnect(self, code):
+        self.channel_layer.group_discard(
             "game_waiting_list",
             self.channel_name
         )
 
 
-class GamePlayersListConsumer(AsyncJsonWebsocketConsumer):
+class GamePlayersListConsumer(JsonWebsocketConsumer):
     _redis_cache = caches["default"]
 
-    async def _send_error(self, message):
-        await self.send_json(
+    def _send_error(self, message):
+        self.send_json(
             {
                 "status": "ERROR",
                 "message": message
             }
         )
 
-    async def connect(self):
-        await self.accept()
+    def connect(self):
+        self.accept()
     
-    async def receive(self, text_data=None, bytes_data=None, **kwargs):
+    def receive(self, text_data=None, bytes_data=None, **kwargs):
         if bytes_data:
-            await self._send_error(
+            self._send_error(
                 "This WebSocket can't receive binary data."
             )
             return
 
         try:
             if text_data:
-                json_content = await self.decode_json(text_data)
+                json_content = self.decode_json(text_data)
             else:
-                await self._send_error("Text data is not provided.")
+                self._send_error("Text data is not provided.")
                 return
         except JSONDecodeError:
-            await self._send_error(
+            self._send_error(
                 "Sent JSON-like text can't be decode. Check your sent text data."
             )
             return
         
-        await self.receive_json(json_content)
+        self.receive_json(json_content)
 
-    async def receive_json(self, content, **kwargs):
+    def receive_json(self, content, **kwargs):
         game_code = content.get("gameCode")
 
         if not game_code:
-            await self._send_error(
+            self._send_error(
                 "The 'gameCode' parametr is not provided."
             )
             return
@@ -85,11 +85,11 @@ class GamePlayersListConsumer(AsyncJsonWebsocketConsumer):
         try:
             game = self._redis_cache.get(f"game:{game_code}")
         except NoPermissionError:
-            await self._send_error("Invalid game code.")
+            self._send_error("Invalid game code.")
             return
         
         if game is None:
-            await self._send_error(
+            self._send_error(
                 f"The game with the code {game_code} is not exists."
             )
         else:
@@ -98,12 +98,12 @@ class GamePlayersListConsumer(AsyncJsonWebsocketConsumer):
                 many=True
             ).data
 
-            await self.channel_layer.group_add(
+            self.channel_layer.group_add(
                 f"game_{game_code}",
                 self.channel_name
             )
 
-            await self.send_json(
+            self.send_json(
                 content={
                     "status": "OK",
                     "dataType": "playersList",
@@ -111,9 +111,9 @@ class GamePlayersListConsumer(AsyncJsonWebsocketConsumer):
                 }
             )
 
-    async def new_player(self, event):
+    def new_player(self, event):
         if event.get("content"):
-            await self.send_json(
+            self.send_json(
                 content={
                     "dataType": "newPlayer",
                     "newPlayer": event["content"].get("new_player")
