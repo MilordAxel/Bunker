@@ -1,6 +1,7 @@
 from json.decoder import JSONDecodeError
 
 from django.core.cache import caches
+from asgiref.sync import async_to_sync
 from redis.exceptions import NoPermissionError
 from channels.generic.websocket import JsonWebsocketConsumer
 
@@ -10,7 +11,7 @@ from . import serializers, filters
 class GameWaitingListConsumer(JsonWebsocketConsumer):
     def connect(self):
         self.accept()
-        self.channel_layer.group_add(
+        async_to_sync(self.channel_layer.group_add)(
             "game_waiting_list",
             self.channel_name
         )
@@ -32,7 +33,7 @@ class GameWaitingListConsumer(JsonWebsocketConsumer):
         self.send_json(content=event.get("content", {}))
     
     def disconnect(self, code):
-        self.channel_layer.group_discard(
+        async_to_sync(self.channel_layer.group_discard)(
             "game_waiting_list",
             self.channel_name
         )
@@ -98,7 +99,7 @@ class GamePlayersListConsumer(JsonWebsocketConsumer):
                 many=True
             ).data
 
-            self.channel_layer.group_add(
+            async_to_sync(self.channel_layer.group_add)(
                 f"game_{game_code}",
                 self.channel_name
             )
