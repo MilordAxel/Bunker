@@ -120,3 +120,12 @@ class GamePlayersListConsumer(JsonWebsocketConsumer):
                     "newPlayer": event["content"].get("new_player")
                 }
             )
+
+    def delete_player(self, event):
+        if event.get("content"):
+            self.send_json(
+                content={
+                    "dataType": "delPlayer",
+                    "playerID": event["content"].get("player_id")
+                }
+            )

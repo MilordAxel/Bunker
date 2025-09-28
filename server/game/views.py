@@ -137,3 +137,44 @@ class GameViewSet(ViewSet):
         )
         response.set_cookie("playerID", serialized_new_player.get("id"))
         return response
+
+    @action(methods=["delete"], detail=False, url_name="del_player", url_path="del_player")
+    def delete_player_from_game(self, request):
+        game_code = request.data.get("gameCode")
+        del_other_player = request.data.get("delOtherPlayer")
+
+        if del_other_player:
+            player_id = request.data.get("playerID")
+        else:
+            player_id = request.COOKIES.get("playerID")
+        
+        game = REDIS_CACHE.get(f"game:{game_code}")
+
+        for player in game.players:
+            serialized_player = serializers.PlayerSerializer(
+                player
+            ).data
+
+            if serialized_player.get("id") == player_id:
+                game.players.remove(player)
+                break
+
+            async_to_sync(get_channel_layer().group_send)(
+                f"game_{game_code}",
+                {
+                    "type": "delete.player",
+                    "content": { "player_id": player_id }
+                }
+            )
+        else:
+            return Response(
+                data={
+                    "message": f"Player with ID {player_id} player is not in this game"
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        REDIS_CACHE.set(f"game:{game_code}", game)
+        return Response(
+            status=status.HTTP_200_OK
+        )
