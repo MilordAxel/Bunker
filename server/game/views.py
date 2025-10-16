@@ -157,15 +157,16 @@ class GameViewSet(ViewSet):
 
             if serialized_player.get("id") == player_id:
                 game.players.remove(player)
-                break
 
-            async_to_sync(get_channel_layer().group_send)(
-                f"game_{game_code}",
-                {
-                    "type": "delete.player",
-                    "content": { "player_id": player_id }
-                }
-            )
+                async_to_sync(get_channel_layer().group_send)(
+                    f"game_{game_code}",
+                    {
+                        "type": "delete.player",
+                        "content": { "player_id": player_id }
+                    }
+                )
+
+                break
         else:
             return Response(
                 data={
