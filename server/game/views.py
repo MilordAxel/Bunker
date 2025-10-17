@@ -70,7 +70,10 @@ class GameViewSet(ViewSet):
         )
 
         response = Response(
-            {"gameCode": new_game.code},
+            data={
+                "gameCode": new_game.code,
+                "hostPlayerID": game_host.id
+            },
             status=status.HTTP_201_CREATED
         )
         response.set_cookie("playerID", serialized_game_host.get("id"))
@@ -131,8 +134,17 @@ class GameViewSet(ViewSet):
             }
         )
 
+        host_player = None
+        for player in game.players:
+            if player.game_host:
+                host_player = player
+                break
+
         response = Response(
-            data={"gameName": game.name},
+            data={
+                "gameName": game.name,
+                "hostPlayerID": str(host_player.id)
+            },
             status=status.HTTP_200_OK
         )
         response.set_cookie("playerID", serialized_new_player.get("id"))
