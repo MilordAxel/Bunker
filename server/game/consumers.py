@@ -129,3 +129,12 @@ class GamePlayersListConsumer(JsonWebsocketConsumer):
                     "playerID": event["content"].get("player_id")
                 }
             )
+
+    def host_changed(self, event):
+        if event.get("content"):
+            self.send_json(
+                content={
+                    "dataType": "changeHost",
+                    "hostPlayerID": event["content"].get("host_player_id")
+                }
+            )
