@@ -200,8 +200,12 @@ class GameViewSet(ViewSet):
                 },
                 status=status.HTTP_400_BAD_REQUEST
             )
-        
-        REDIS_CACHE.set(f"game:{game_code}", game)
+
+        if game.players:
+            REDIS_CACHE.set(f"game:{game_code}", game)
+        else:
+            REDIS_CACHE.delete(f"game:{game_code}")
+
         return Response(
             status=status.HTTP_200_OK
         )
