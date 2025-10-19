@@ -1,3 +1,5 @@
+from random import choice
+
 from django.core.cache import caches
 from django.core.exceptions import ValidationError
 
@@ -177,6 +179,18 @@ class GameViewSet(ViewSet):
                         "content": { "player_id": player_id }
                     }
                 )
+
+                if player.game_host and game.players:
+                    new_host_player = choice(game.players)
+                    new_host_player.game_host = True
+
+                    async_to_sync(get_channel_layer().group_send)(
+                        f"game_{game_code}",
+                        {
+                            "type": "host.changed",
+                            "content": { "host_player_id": str(new_host_player.id) }
+                        }
+                    )
 
                 break
         else:
