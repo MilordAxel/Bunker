@@ -209,3 +209,50 @@ class GameViewSet(ViewSet):
         return Response(
             status=status.HTTP_200_OK
         )
+
+    @action(methods=["patch"], detail=False, url_name="change_host", url_path="change_host")
+    def change_host(self, request):
+        game_code = request.data.get("gameCode")
+        new_host_player_ID = request.data.get("newHostPlayerID")
+        request_player_id = request.COOKIES.get("playerID")
+
+        game = REDIS_CACHE.get(f"game:{game_code}")
+
+        players_id = [str(pl.id) for pl in game.players]
+        if new_host_player_ID not in players_id:
+            return Response(
+                data={
+                    "message": f"Player with ID {new_host_player_ID} is not in this game"
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        for player in game.players:
+            if player.game_host and str(player.id) == request_player_id:
+                player.game_host = False
+                break
+        else:
+            return Response(
+                data={
+                    "message": f"Player with ID {new_host_player_ID} can't change the game host"
+                }
+            )
+
+        for player in game.players:
+            if str(player.id) == new_host_player_ID:
+                player.game_host = True
+                break
+        
+        async_to_sync(get_channel_layer().group_send)(
+            f"game_{game_code}",
+            {
+                "type": "host.changed",
+                "content": { "host_player_id": new_host_player_ID }
+            }
+        )
+
+        REDIS_CACHE.set(f"game:{game_code}", game)
+
+        return Response(
+            status=status.HTTP_200_OK
+        )
