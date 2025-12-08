@@ -17,5 +17,5 @@ urlpatterns = [
 
 websocket_urlpatterns = [
     path("game_waiting_list", consumers.GameWaitingListConsumer.as_asgi(), name="game_waiting_list"),
-    re_path(r"^game/(?P<code>[a-zA-Z0-9]{1,10})/players$", consumers.GamePlayersListConsumer.as_asgi(), name="game_players")
+    re_path(r"^game/players$", consumers.GamePlayersListConsumer.as_asgi(), name="game_players")
 ]
