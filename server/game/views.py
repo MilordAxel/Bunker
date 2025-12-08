@@ -256,3 +256,25 @@ class GameViewSet(ViewSet):
         return Response(
             status=status.HTTP_200_OK
         )
+
+    @action(methods=["patch"], detail=False, url_name="start_game", url_path="start")
+    def start_game(self, request):
+        game_code = request.data.get("gameCode")
+
+        game = REDIS_CACHE.get(f"game:{game_code}")
+
+        if game.status != "ongoing":
+            game.status = "ongoing"
+        else:
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST,
+                data={
+                    "message": f"Game {game_code} has already started"
+                }
+            )
+
+        REDIS_CACHE.set(f"game:{game_code}", game)
+
+        return Response(
+            status=status.HTTP_200_OK
+        )
