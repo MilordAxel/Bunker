@@ -74,6 +74,7 @@ class GameViewSet(ViewSet):
         response = Response(
             data={
                 "gameCode": new_game.code,
+                "playerID": game_host.id,
                 "hostPlayerID": game_host.id
             },
             status=status.HTTP_201_CREATED
@@ -145,6 +146,7 @@ class GameViewSet(ViewSet):
         response = Response(
             data={
                 "gameName": game.name,
+                "playerID": str(new_player.id),
                 "hostPlayerID": str(host_player.id)
             },
             status=status.HTTP_200_OK
