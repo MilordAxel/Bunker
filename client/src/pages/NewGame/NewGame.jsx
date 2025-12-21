@@ -38,7 +38,8 @@ function NewGame() {
                     {
                         state: {
                             gameName: gameName,
-                            players: response.data.players
+                            playerID: response.data.playerID,
+                            hostPlayerID: response.data.hostPlayerID
                         }
                     }
                 );
