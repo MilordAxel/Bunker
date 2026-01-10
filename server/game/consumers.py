@@ -116,6 +116,7 @@ class GamePlayersListConsumer(JsonWebsocketConsumer):
         if event.get("content"):
             self.send_json(
                 content={
+                    "status": "OK",
                     "dataType": "newPlayer",
                     "newPlayer": event["content"].get("new_player")
                 }
@@ -125,6 +126,7 @@ class GamePlayersListConsumer(JsonWebsocketConsumer):
         if event.get("content"):
             self.send_json(
                 content={
+                    "status": "OK",
                     "dataType": "delPlayer",
                     "playerID": event["content"].get("player_id")
                 }
@@ -134,6 +136,7 @@ class GamePlayersListConsumer(JsonWebsocketConsumer):
         if event.get("content"):
             self.send_json(
                 content={
+                    "status": "OK",
                     "dataType": "changeHost",
                     "hostPlayerID": event["content"].get("host_player_id")
                 }
