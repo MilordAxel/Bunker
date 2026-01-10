@@ -237,7 +237,8 @@ class GameViewSet(ViewSet):
             return Response(
                 data={
                     "message": f"Player with ID {new_host_player_ID} can't change the game host"
-                }
+                },
+                status=status.HTTP_400_BAD_REQUEST
             )
 
         for player in game.players:
