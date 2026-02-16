@@ -4,6 +4,7 @@ import {Routes, Route} from "react-router-dom"
 import Home from "./pages/home/Home"
 import Support from "./pages/support/Support"
 import NewGame from "./pages/NewGame/NewGame"
+import GameWaiting from "./pages/GameWaiting/GameWaiting"
 
 function App() {
     return (
