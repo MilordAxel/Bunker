@@ -122,6 +122,22 @@ class GameViewSet(ViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
         
+        if game.private:
+            game_password = request.data.get("gamePassword")
+            if not game_password:
+                return Response(
+                    data={
+                        "requiresPassword": True if game_password is None else False,
+                        "gamePassword": ["This field cannot be blank."]
+                    },
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            elif game.password != game_password:
+                return Response(
+                    data={"gamePassword": ["Incorrect password."]},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+        
         game.add_players(new_player)
 
         REDIS_CACHE.set(f"game:{game.code}", game)
