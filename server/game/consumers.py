@@ -27,10 +27,28 @@ class GameWaitingListConsumer(JsonWebsocketConsumer):
             many=True
         ).data
 
-        self.send_json(content=serialized_games_waiting_list)
+        self.send_json(
+            content={
+                "dataType": "init",
+                "gamesList": serialized_games_waiting_list
+            }
+        )
 
     def broadcast_new_game(self, event):
-        self.send_json(content=event.get("content", {}))
+        self.send_json(
+            content={
+                "dataType": "newGame",
+                "game": event.get("content", {})
+            }
+        )
+    
+    def broadcast_deleted_game(self, event):
+        self.send_json(
+            content={
+                "dataType": "deleteGame",
+                "game": event.get("content", {})
+            }
+        )
     
     def disconnect(self, code):
         async_to_sync(self.channel_layer.group_discard)(
