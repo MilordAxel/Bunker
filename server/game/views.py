@@ -224,6 +224,15 @@ class GameViewSet(ViewSet):
         else:
             REDIS_CACHE.delete(f"game:{game_code}")
 
+            serialized_game = serializers.GameSerializer(game).data
+            async_to_sync(get_channel_layer().group_send)(
+                "game_waiting_list",
+                {
+                    "type": "broadcast.deleted.game",
+                    "content": serialized_game
+                }
+            )
+
         return Response(
             status=status.HTTP_200_OK
         )
